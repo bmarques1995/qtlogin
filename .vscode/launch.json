@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb-dap",
+            "request": "launch",
+            "name": "clang debug",
+            "program": "${workspaceFolder}/Linux/Debug/bin/QtSample",
+            "args": [ "one", "two", "three" ],
+        }
+    ]
+}
