@@ -13,7 +13,7 @@ def main():
     else:
         vs_compiler = ""
 
-    build_qt_package("qtsvg", "6.9.1", build_mode, install_prefix, module_destination, vs_compiler)
+    build_qt_package("qtsvg", "6.10.0", build_mode, install_prefix, module_destination, vs_compiler)
 
 if __name__ == "__main__":
     try:

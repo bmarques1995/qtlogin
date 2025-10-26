@@ -4,6 +4,7 @@
 cmake_minimum_required (VERSION 3.22)
 
 option(BUILD_AS_WINDOWED_APP "Build the app as win32" OFF)
+option(PYTHON_NAME_SUFFIX "python suffix name for executable" "")
 
 # Habilite a Recarga Dinâmica para compiladores MSVC, se houver suporte.
 if (POLICY CMP0141)

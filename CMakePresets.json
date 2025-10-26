@@ -10,6 +10,7 @@
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe",
+                "PYTHON_NAME_SUFFIX": "3.13",
                 "BUILD_AS_WINDOWED_APP":  true
             },
             "condition": {
@@ -52,6 +53,7 @@
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
+                "PYTHON_NAME_SUFFIX": "3",
                 "BUILD_AS_WINDOWED_APP":  false
             }
         },
