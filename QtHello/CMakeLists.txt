@@ -32,15 +32,20 @@ if (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	trace_dependency(NAME Qt6 COMPONENTS WaylandClient INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/qtwayland.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
 endif()
 
+qt_standard_project_setup()
+
 file(GLOB_RECURSE SAMPLE_HDRS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.hpp")
 file(GLOB_RECURSE SAMPLE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 file(GLOB_RECURSE SAMPLE_UIS ABSOLUTE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.ui")
 
-get_target_property(UIC_EXECUTABLE Qt6::uic IMPORTED_LOCATION)
+#get_target_property(UIC_EXECUTABLE Qt6::uic IMPORTED_LOCATION)
+#gen_uih(${UIC_EXECUTABLE} ${SAMPLE_UIS})
 
-gen_uih(${UIC_EXECUTABLE} ${SAMPLE_UIS})
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR BUILD_AS_WINDOWED_APP)
+	set(WINDOWED_ARG WIN32;MACOSX_BUNDLE)
+endif()
 
-add_executable(${TARGET_NAME} ${SAMPLE_HDRS} ${SAMPLE_SRCS} ${SAMPLE_UIS})
+qt_add_executable(${TARGET_NAME} ${WINDOWED_ARG} ${SAMPLE_HDRS} ${SAMPLE_SRCS} ${SAMPLE_UIS})
 
 target_link_libraries(${TARGET_NAME} PUBLIC Qt6::Core Qt6::Widgets Qt6::Svg Qt6::Gui Qt6::Network)
 target_include_directories(${TARGET_NAME} PUBLIC
@@ -59,7 +64,6 @@ endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR BUILD_AS_WINDOWED_APP)
 	if(WIN32)
-		set_target_properties(${TARGET_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
 		target_compile_definitions(${TARGET_NAME} PUBLIC SAMPLE_WINDOWED)
 	endif()
 endif()

@@ -1,5 +1,5 @@
 #include "MainWindow.hpp"
-#include "MainWindow.qtui.h"
+#include "ui_MainWindow.h"
 #include <QDesktopServices>
 #include <QUrl>
 
