@@ -1,0 +1,43 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "server",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "console": "integratedTerminal",
+            "args": [
+                "runserver", "7700"
+            ]
+        },
+        {
+            "name": "tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "console": "integratedTerminal",
+            "args": [
+                "test", "AuthApp"
+            ]
+        },
+        {
+          "name": "celery",
+          "type": "debugpy",
+          "request": "launch",
+          "module": "celery",
+          "args": ["-A", "server", "worker", "--pool=solo", "--loglevel=info", "-E"],
+          "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+        "name": "tasked_server",
+        "configurations": ["server", "celery"]
+        },
+        {
+            "name": "tasked_tests",
+            "configurations": ["tests", "celery"]
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "path": "./qt"
+        },
+        {
+            "path": "./qtlogin_next"
+        },
+        {
+            "path": "./server"
+        }
+    ],
+    "settings": {
+        "search.exclude": {
+          "**/__pycache__/*": true
+        },
+        "editor.tabSize": 4,
+    },
+    "extensions": {
+        "recommendations": [
+        ]
+    }
+}
