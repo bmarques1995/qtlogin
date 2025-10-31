@@ -1,9 +1,12 @@
 ﻿# CMakeList.txt: arquivo de projeto de CMake de nível superior, fazer configuração global
 # e inclua subprojetos aqui.
 #
+# https://learn.microsoft.com/pt-br/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version
 cmake_minimum_required (VERSION 3.22)
 
 option(BUILD_AS_WINDOWED_APP "Build the app as win32" OFF)
+option(EXECUTE_PROTOCOL_REGISTRATION "Register the executable on HKEY_CLASSES_ROOT" OFF)
+
 option(PYTHON_NAME_SUFFIX "python suffix name for executable" "")
 
 # Habilite a Recarga Dinâmica para compiladores MSVC, se houver suporte.

@@ -9,7 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     connect(ui->googleButton, &QPushButton::clicked,
-            this, &MainWindow::buttonClickedEffect);
+            this, &MainWindow::googleButtonClickedEffect);
+    connect(ui->githubButton, &QPushButton::clicked,
+        this, &MainWindow::githubButtonClickedEffect);
 }
 
 MainWindow::~MainWindow()
@@ -28,9 +30,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QWidget::closeEvent(event); // Call base implementation
 }
 
-void MainWindow::buttonClickedEffect(bool checked)
+void MainWindow::googleButtonClickedEffect(bool checked)
 {
-    qDebug() << "Close button clicked";
-    QDesktopServices::openUrl(QUrl("https://brunosmarques.com.br/posts/building-qt-from-scratch"));
+    QDesktopServices::openUrl(QUrl("http://localhost:4000/login/google/qtapp"));
 }
 
+void MainWindow::githubButtonClickedEffect(bool checked)
+{
+    QDesktopServices::openUrl(QUrl("http://localhost:4000/login/github/qtapp"));
+}

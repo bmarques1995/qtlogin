@@ -19,7 +19,8 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 public slots:
-    void buttonClickedEffect(bool checked = false);
+    void googleButtonClickedEffect(bool checked = false);
+    void githubButtonClickedEffect(bool checked = false);
 
 private:
     Ui::MainWindow *ui;

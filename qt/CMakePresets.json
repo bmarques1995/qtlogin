@@ -10,6 +10,7 @@
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe",
+                "EXECUTE_PROTOCOL_REGISTRATION": true,
                 "PYTHON_NAME_SUFFIX": "3.13",
                 "BUILD_AS_WINDOWED_APP":  true
             },
