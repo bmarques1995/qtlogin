@@ -12,9 +12,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+import pymysql
+import configparser
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+config = configparser.ConfigParser()
+config.read(BASE_DIR / "env_vars.ini")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -27,6 +32,19 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MYSQL_DB_NAME : str = config.get('MYSQL', 'db_name')
+MYSQL_DB_USER : str = config.get('MYSQL', 'db_user')
+MYSQL_DB_PASSWORD : str = config.get('MYSQL', 'db_password')
+
+GOOGLE_CLIENT_ID = config.get('GOOGLE_AUTH', 'id')
+GOOGLE_CLIENT_SECRET = config.get('GOOGLE_AUTH', 'secret')
+GOOGLE_REDIRECT_URI_LOGIN = config.get('GOOGLE_AUTH', 'redirect_url_login')
+GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/auth'
+GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
+
+GITHUB_CLIENT_ID = config.get('GITHUB_AUTH', 'id')
+GITHUB_CLIENT_SECRET = config.get('GITHUB_AUTH', 'secret')
+GITHUB_REDIRECT_URI_LOGIN = config.get('GITHUB_AUTH', 'redirect_url_login')
 
 # Application definition
 
@@ -74,10 +92,16 @@ WSGI_APPLICATION = 'server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+pymysql.install_as_MySQLdb()
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': MYSQL_DB_NAME,
+        'USER': MYSQL_DB_USER,
+        'PASSWORD': MYSQL_DB_PASSWORD,
+        'HOST': 'localhost',
+        'PORT': 3306
     }
 }
 

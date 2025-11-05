@@ -1,6 +1,11 @@
-const validServices = new Map();
+const validServices = new Map<string, number>();
 
-validServices.set("github", 1);
-validServices.set("google", 2);
+const servicesEnum = {
+    github: 1,
+    google: 2
+};
 
-export default validServices;
+validServices.set("github", servicesEnum.github);
+validServices.set("google", servicesEnum.google);
+
+export {servicesEnum, validServices};

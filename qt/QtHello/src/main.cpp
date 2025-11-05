@@ -5,12 +5,10 @@
 #endif
 
 #include <QApplication>
-#include "ProcessWebInputs.hpp"
 #include "QtListenServer.hpp"
 #include <QMessageBox>
 
 int main(int argc, char* argv[])
-
 {
     QApplication app(argc, argv);
 
