@@ -25,7 +25,7 @@ def get_google_oauth_token(query_params: dict, redirect_uri: str = None):
     except (RequestException) as e:
         raise DomainException("Invalid Google Key")
     
-def get_google_user(id_token: str, access_token: str):
+def retrieve_google_user_info(id_token: str, access_token: str):
     url: str = f"https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token={access_token}"
     try:
         user_response = requests.get(url= url, headers= {

@@ -24,7 +24,7 @@ def get_github_oauth_token(query_params: dict):
     except (RequestException) as e:
         raise DomainException("Invalid Google Key")
     
-def get_github_user(access_token: str):
+def retrieve_github_user_info(access_token: str):
     url: str = f"https://api.github.com/user"
     try:
         user_response = requests.get(url= url, headers= {

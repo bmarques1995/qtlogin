@@ -9,7 +9,7 @@ class User(models.Model):
         GITHUB = "github"
 
     name = models.CharField(max_length=255, primary_key=True, null=False)
-    email = models.CharField(max_length=255, unique=True, null=False)
+    #email = models.CharField(max_length=255, unique=True, null=False)
     subscription = EnumField(choices=UserSubscription.choices, default=UserSubscription.OWN)
     confirmed_registration = models.BooleanField(default=False, null=False)
     account_active = models.BooleanField(default=True, null=False)

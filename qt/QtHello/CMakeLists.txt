@@ -32,9 +32,20 @@ if (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	trace_dependency(NAME Qt6 COMPONENTS WaylandClient INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/qtwayland.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
 endif()
 
+trace_dependency(NAME zlib INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/zlib_ng.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME zstd INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/zstd.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME brotli INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/brotli.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME lz4 INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/lz4.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME liblzma INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/lzma.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME OpenSSL INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/openssl.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME nghttp2 INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/nghttp2.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME curl INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/libcurl.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME simdjson INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/simdjson.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+trace_dependency(NAME jwt-cpp INSTALL_SCRIPT "${PROJECT_SOURCE_DIR}/installers/jwtcpp.py" PYTHON_NAME_SUFFIX ${PYTHON_NAME_SUFFIX} LIMIT_SEARCH_PATHS)
+
 if(WIN32)
 	if(EXECUTE_PROTOCOL_REGISTRATION)
-		execute_process(COMMAND python${PYTHON_NAME_SUFFIX} -File "${PROJECT_SOURCE_DIR}/installers/register_keys.py" ${CMAKE_INSTALL_PREFIX})
+		execute_process(COMMAND python${PYTHON_NAME_SUFFIX} "${PROJECT_SOURCE_DIR}/installers/register_keys.py" ${CMAKE_INSTALL_PREFIX})
 	endif()
 endif()
 
@@ -54,7 +65,7 @@ endif()
 
 qt_add_executable(${TARGET_NAME} ${WINDOWED_ARG} ${SAMPLE_HDRS} ${SAMPLE_SRCS} ${SAMPLE_UIS})
 
-target_link_libraries(${TARGET_NAME} PUBLIC Qt6::Core Qt6::Widgets Qt6::Svg Qt6::Gui Qt6::Network)
+target_link_libraries(${TARGET_NAME} PUBLIC Qt6::Core Qt6::Widgets Qt6::Svg Qt6::Gui Qt6::Network CURL::libcurl_shared simdjson::simdjson jwt-cpp::jwt-cpp)
 target_include_directories(${TARGET_NAME} PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/Editor>
 	$<INSTALL_INTERFACE:./>
