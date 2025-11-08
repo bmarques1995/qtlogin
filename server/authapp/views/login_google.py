@@ -1,12 +1,25 @@
+import json
 from django.conf import settings
 from django.views.decorators.http import require_http_methods
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .Shared.google import get_google_user
+
+from Shared.token_gen import gen_token_redirect_url, gen_tokens
+from authapp.models.user import User
+from authapp.views.Shared.user import register_user
+from .Shared.google import get_google_user, register_google_info
 
 @csrf_exempt
 @require_http_methods(['GET'])
 def login_google(request: HttpRequest):
-    query_params = request.GET.dict()
-    user_data = get_google_user(query_params)
-    return JsonResponse(user_data, status=200)
+    #return JsonResponse(user_data, status=200)
+    try:
+        query_params = request.GET.dict()
+        extra_data = json.loads(query_params['state'])
+        user_data = get_google_user(query_params)
+        username = user_data['email'].split("@")[0]
+        user_info : User = User.objects.get(name = username)
+    except User.DoesNotExist:
+        user_info = register_user(username, User.UserSubscription.GITHUB)
+        register_google_info(user_info, f"{user_data['id']}")
+    return HttpResponseRedirect(redirect_to=gen_token_redirect_url(gen_tokens(user_info), extra_data['protocol']))

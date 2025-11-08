@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import validOrigins from '@/shared/validOrigins';
+import { validOrigins } from '@/shared/validOrigins';
 import {validServices, servicesEnum} from '@/shared/validServices';
 import { useEffect } from 'react';
 
@@ -33,7 +33,7 @@ export default function Home() {
             const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID; // Replace with your Google client ID
             const redirectUri = encodeURIComponent(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login_google`);
             const scope = encodeURIComponent('openid email profile');
-            const state = encodeURIComponent("example");
+            const state = encodeURIComponent(JSON.stringify({protocol: params.origin}));
             const responseType = 'code';
 
             const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -49,11 +49,11 @@ export default function Home() {
         const proceedGithubLogin = async () =>{
             console.log("github call");
             const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID; // Replace with your Google client ID
-            
+            const state = encodeURIComponent(JSON.stringify({protocol: params.origin}));
 
             const authUrl = `https://github.com/login/oauth/authorize?` +
                             `client_id=${clientId}&` +
-                            `state={\"bouncer\": \"testing\"}`;
+                            `state=${state}`;
 
             window.location.assign(authUrl);
         };
@@ -64,7 +64,7 @@ export default function Home() {
 
         loginTask.get(validServices.get(params.service)!)?.();
 
-    },[params.service]);
+    },[params.service, params.origin]);
 
     return (
         <div className="flex flex-col min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">

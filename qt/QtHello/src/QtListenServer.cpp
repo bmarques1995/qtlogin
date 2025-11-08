@@ -64,10 +64,9 @@ void QtListenServer::handleUrl(const QString& url)
         QMessageBox::information(
             nullptr,
             "Received from Next.js",
-            QString("Action: %1\nItem: %2\nPrice: %3")
-            .arg(action)
-            .arg(item["name"].toString())
-            .arg(item["price"].toDouble())
+            QString("Refresh token: %1\nAccess token: %2")
+            .arg(item["refresh"].toString())
+            .arg(item["access"].toString())
         );
     }
     else {

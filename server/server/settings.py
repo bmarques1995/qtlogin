@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import sys
 
 import pymysql
 import configparser
+from Shared.deltatime import string_to_timedelta
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +36,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+HMAC_BASE_KEY : str = config.get('HMAC', 'base_key')
+
 MYSQL_DB_NAME : str = config.get('MYSQL', 'db_name')
 MYSQL_DB_USER : str = config.get('MYSQL', 'db_user')
 MYSQL_DB_PASSWORD : str = config.get('MYSQL', 'db_password')
@@ -45,6 +51,45 @@ GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
 GITHUB_CLIENT_ID = config.get('GITHUB_AUTH', 'id')
 GITHUB_CLIENT_SECRET = config.get('GITHUB_AUTH', 'secret')
 GITHUB_REDIRECT_URI_LOGIN = config.get('GITHUB_AUTH', 'redirect_url_login')
+
+JWT_KEY_DIR : str = config.get('JWT', 'keys_dir')
+
+ACCESS_TOKEN_LIFETIME = string_to_timedelta(config.get('TOKEN_LIFETIME', 'access'))
+REFRESH_TOKEN_LIFETIME = string_to_timedelta(config.get('TOKEN_LIFETIME', 'refresh'))
+ACTION_TOKEN_LIFETIME = string_to_timedelta(config.get('TOKEN_LIFETIME', 'action'))
+
+REDIS_HOST = config.get('REDIS', 'full_host')
+
+JWT_PUB_KEY_FILE = JWT_KEY_DIR + 'public_key.pem'
+JWT_PRIV_KEY_FILE = JWT_KEY_DIR + 'private_key.pem'
+
+ACCESS_TOKEN_CACHE_TIMEOUT = int(config.get('CACHE_TOKEN_TIMEOUT', 'access'))
+REFRESH_TOKEN_CACHE_TIMEOUT = int(config.get('CACHE_TOKEN_TIMEOUT', 'refresh'))
+
+FRONTEND_ROUTER_BASE_ROUTE = config.get('FRONTEND_ROUTER', 'base_route')
+FRONTEND_ROUTER_TOKEN_REDIRECT = config.get('FRONTEND_ROUTER', 'token_redirect')
+
+try:
+    with open(JWT_PRIV_KEY_FILE, "rb") as key_file:
+        JWT_PRIVATE_KEY  = serialization.load_pem_private_key(
+            key_file.read(),
+            password=None
+        )
+except FileNotFoundError:
+    # Generate EC private key using secp521r1 curve
+    JWT_PRIVATE_KEY = ec.generate_private_key(ec.SECP521R1())
+
+    # Save private key to a file in PEM format
+    with open("private_key.pem", "wb") as private_key_file:
+        private_key_file.write(
+            JWT_PRIVATE_KEY.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,  # Traditional PEM format
+                encryption_algorithm=serialization.NoEncryption()  # No password protection
+            )
+        )
+
+JWT_PUBLIC_KEY = JWT_PRIVATE_KEY.public_key()
 
 # Application definition
 
