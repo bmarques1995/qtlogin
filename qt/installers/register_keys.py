@@ -25,9 +25,6 @@ install_prefix = sys.argv[1].replace("/", "\\")
 if install_prefix.endswith("\\") or install_prefix.endswith("\""):
     install_prefix = install_prefix[:-1]
 
-with open("debug.txt", "w") as f:
-    version = f.write(install_prefix)
-
 key = winreg.CreateKeyEx(
     winreg.HKEY_CLASSES_ROOT,
     r"qtsample",

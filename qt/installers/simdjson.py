@@ -17,7 +17,7 @@ def main():
     simdjson_cmake_dir = simdjson_dir
 
     clone_and_checkout("https://github.com/simdjson/simdjson.git", destination=simdjson_dir, commit_hash=commit_hash_release)
-    
+    f"-DSIMDJSON_INLINE_IMPLEMENTATION=ON "
     if os_name == "windows":
         run(f'cmake -S "{simdjson_cmake_dir}" -B "{build_dir}" '
             f'-DCMAKE_INSTALL_PREFIX="{install_prefix}" '

@@ -10,11 +10,11 @@ function(gen_uih UIC_EXECUTABLE INPUT_UI)
 	foreach(src ${INPUT_UI})
 		get_filename_component(FILE_NAME_WE ${src} NAME_WE)
 		get_filename_component(FILE_DIR ${src} DIRECTORY)
-		message(WARNING ${src})
-		message(WARNING ${FILE_DIR})
-		message(WARNING ${FILE_NAME_WE})
+		message(STATUS ${src})
+		message(STATUS ${FILE_DIR})
+		message(STATUS ${FILE_NAME_WE})
 		
-		set(GENERATED_UI_H "${FILE_DIR}/${FILE_NAME_WE}.qtui.h")
+		set(GENERATED_UI_H "${FILE_DIR}/ui_${FILE_NAME_WE}.hpp")
 
 		execute_process(
 			COMMAND ${UIC_EXECUTABLE} -o ${GENERATED_UI_H} ${src}
@@ -55,15 +55,23 @@ file(GLOB_RECURSE SAMPLE_HDRS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.hpp")
 file(GLOB_RECURSE SAMPLE_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 file(GLOB_RECURSE SAMPLE_UIS ABSOLUTE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.ui")
 
-#get_target_property(UIC_EXECUTABLE Qt6::uic IMPORTED_LOCATION)
-#gen_uih(${UIC_EXECUTABLE} ${SAMPLE_UIS})
+get_target_property(UIC_EXECUTABLE Qt6::uic IMPORTED_LOCATION)
+gen_uih(${UIC_EXECUTABLE} "${SAMPLE_UIS}")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR BUILD_AS_WINDOWED_APP)
-	set(WINDOWED_ARG WIN32;MACOSX_BUNDLE)
+	if(WIN32)
+		set(WINDOWED_ARG WIN32)
+	elseif(APPLE)
+		set(WINDOWED_ARG MACOSX_BUNDLE)
+	endif()
 	#set(WINDOWED_ARG)
 endif()
 
-qt_add_executable(${TARGET_NAME} ${WINDOWED_ARG} ${SAMPLE_HDRS} ${SAMPLE_SRCS} ${SAMPLE_UIS})
+add_executable(${TARGET_NAME} ${WINDOWED_ARG} ${SAMPLE_HDRS} ${SAMPLE_SRCS})
+if(WIN32)
+	target_link_options(${TARGET_NAME} PRIVATE "/ENTRY:mainCRTStartup")
+endif()
+
 
 target_link_libraries(${TARGET_NAME} PUBLIC Qt6::Core Qt6::Widgets Qt6::Svg Qt6::Gui Qt6::Network CURL::libcurl_shared simdjson::simdjson jwt-cpp::jwt-cpp)
 target_include_directories(${TARGET_NAME} PUBLIC
@@ -73,6 +81,13 @@ target_include_directories(${TARGET_NAME} PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/pch>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 )
+
+add_custom_target(copy_env ALL
+			COMMAND ${CMAKE_COMMAND} -E copy
+			"${PROJECT_SOURCE_DIR}/qt_sample.env.json"
+			${CMAKE_PREFIX_PATH}/bin/qt_sample.env.json
+			COMMENT "Copying qt_sample.env.json to ${CMAKE_PREFIX_PATH}/bin/qt_sample.env.json")
+add_dependencies(${TARGET_NAME} copy_env)
 
 if(WIN32)
 	target_compile_definitions(${TARGET_NAME} PUBLIC APP_USES_WINDOWS WIN32_LEAN_AND_MEAN)

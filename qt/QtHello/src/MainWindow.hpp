@@ -1,6 +1,9 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QStackedWidget>
+#include "LoginWidget.hpp"
+#include "HomeWidget.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -8,21 +11,24 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+namespace QtSample
 {
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    class MainWindow : public QMainWindow
+    {
+    public:
+        MainWindow(bool loggedIn, QWidget* parent = nullptr);
+        ~MainWindow();
 
-    bool IsRunning();
-protected:
-    void closeEvent(QCloseEvent* event) override;
+        bool IsRunning();
 
-public slots:
-    void googleButtonClickedEffect(bool checked = false);
-    void githubButtonClickedEffect(bool checked = false);
+        void LoginAction();
+    protected:
+        void closeEvent(QCloseEvent* event) override;
 
-private:
-    Ui::MainWindow *ui;
-    bool m_IsRunning = true;
-};
+    private:
+        bool m_IsRunning = true;
+        QStackedWidget* m_Stack;
+        LoginWidget* m_LoginWidget;
+        HomeWidget* m_HomeWidget;
+    };
+}

@@ -1,15 +1,18 @@
-#include "QtListenServer.hpp"
+#include "ListenServer.hpp"
+#include "Application.hpp"
 #include <QUrlQuery>
 #include <QJsonParseError>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
 
-const QString QtListenServer::s_StaticHost = "qtsample_singleton";
+const QString QtSample::ListenServer::s_StaticHost = "qtsample_singleton";
+QtSample::JsonProcessor QtSample::ListenServer::s_JsonProcessor;
 
-QtListenServer::QtListenServer(int argc, char* argv[])
+QtSample::ListenServer::ListenServer(int argc, char* argv[])
 {
-    
+ 
+    s_JsonProcessor;
     m_Socket.connectToServer(s_StaticHost);
 
     if (m_Socket.waitForConnected(200)) {
@@ -39,11 +42,11 @@ QtListenServer::QtListenServer(int argc, char* argv[])
 
 }
 
-QtListenServer::~QtListenServer()
+QtSample::ListenServer::~ListenServer()
 {
 }
 
-void QtListenServer::handleUrl(const QString& url)
+void QtSample::ListenServer::handleUrl(const QString& url)
 {
     QUrl qurl(url);
     if (qurl.scheme() != "qtsample")
@@ -56,18 +59,12 @@ void QtListenServer::handleUrl(const QString& url)
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(decoded.toUtf8(), &err);
     if (err.error == QJsonParseError::NoError && doc.isObject()) {
-        QJsonObject obj = doc.object();
-        QString action = obj["action"].toString();
-        QJsonObject item = obj["item"].toObject();
-        qDebug() << "Received action:" << action << "item:" << item;
-
-        QMessageBox::information(
-            nullptr,
-            "Received from Next.js",
-            QString("Refresh token: %1\nAccess token: %2")
-            .arg(item["refresh"].toString())
-            .arg(item["access"].toString())
-        );
+        simdjson::dom::element obj;
+        s_JsonProcessor.ProcessJsonText(decoded.toStdString(), &obj);
+        std::string refreshToken = obj["refresh"].get_string().value().data();
+        std::string accessToken = obj["access"].get_string().value().data();
+        auto app = Application::GetInstance();
+        app->NotifyLogin(refreshToken, accessToken);
     }
     else {
         QMessageBox::warning(nullptr, "Error", "Invalid JSON payload.");
