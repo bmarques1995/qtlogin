@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "Fetcher.hpp"
+#include "JsonProcessor.hpp"
 
 namespace QtSample
 {
@@ -8,6 +10,8 @@ namespace QtSample
 	public:
 		TokenContext();
 		TokenContext(std::string_view refreshToken);
+
+		~TokenContext();
 
 		void SetRefreshToken(std::string_view refreshToken);
 		void SetAccessToken(std::string_view accessToken);
@@ -21,10 +25,11 @@ namespace QtSample
 	private:
 		bool IsTokenValid();
 		void SaveRefreshToken();
-		void RenewRefreshToken();
 
+		Fetcher* m_Fetcher;
 		bool m_LoggedIn;
 		std::string m_RefreshToken;
 		std::string m_AccessToken;
+		JsonProcessor m_JsonProcessor;
 	};
 }

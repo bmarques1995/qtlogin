@@ -19,6 +19,10 @@ namespace QtSample
 
 		void NotifyLogin(std::string refreshToken, std::string accessToken);
 
+		void NotifyLogout();
+
+		void NotifyAccessTokenValid();
+
 	private:
 		static Application* s_Instance;
 		static bool s_InstanceInitialized;

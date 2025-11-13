@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include "Fetcher.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -21,5 +22,6 @@ namespace QtSample
 
     private:
         Ui::HomeWidget* m_UI;
+        Fetcher* m_Fetcher;
     };
 }

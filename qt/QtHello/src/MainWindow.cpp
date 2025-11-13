@@ -3,7 +3,7 @@
 #include <QVBoxLayout>
 #include <QUrl>
 
-QtSample::MainWindow::MainWindow(bool loggedIn, QWidget *parent)
+QtSample::MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     m_Stack = new QStackedWidget(this);
@@ -17,7 +17,7 @@ QtSample::MainWindow::MainWindow(bool loggedIn, QWidget *parent)
 	m_Stack->addWidget(m_HomeWidget);
 
     setCentralWidget(m_Stack);
-    m_Stack->setCurrentIndex(loggedIn ? 1 : 0);
+    m_Stack->setCurrentIndex(0);
 }
 
 QtSample::MainWindow::~MainWindow()
@@ -42,8 +42,10 @@ void QtSample::MainWindow::closeEvent(QCloseEvent* event)
 void QtSample::MainWindow::LoginAction()
 {
     qDebug () << "LoginAction: " << true;
-    /*if (loggedIn)
-    {
-        m_Stack->setCurrentIndex(1);
-    }*/
+    m_Stack->setCurrentIndex(1);
+}
+
+void QtSample::MainWindow::LogoutAction()
+{
+    m_Stack->setCurrentIndex(0);
 }

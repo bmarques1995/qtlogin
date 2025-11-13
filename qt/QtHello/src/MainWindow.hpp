@@ -16,12 +16,13 @@ namespace QtSample
     class MainWindow : public QMainWindow
     {
     public:
-        MainWindow(bool loggedIn, QWidget* parent = nullptr);
+        MainWindow(QWidget* parent = nullptr);
         ~MainWindow();
 
         bool IsRunning();
 
         void LoginAction();
+        void LogoutAction();
     protected:
         void closeEvent(QCloseEvent* event) override;
 

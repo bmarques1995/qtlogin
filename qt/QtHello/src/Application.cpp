@@ -1,5 +1,6 @@
 #include "Application.hpp"
 #include "FileHandler.hpp"
+#include "CURLStarter.hpp"
 
 QtSample::Application* QtSample::Application::s_Instance = nullptr;
 bool QtSample::Application::s_InstanceInitialized = false;
@@ -16,8 +17,16 @@ QtSample::Application::Application(int argc, char* argv[])
         throw std::runtime_error("Application already initialized");
     }
 
+    CURLStarter::InitCurl();
+#ifndef WIN32
+    CURLStarter::SetCertificateLocation("/etc/ssl/certs/ca-certificates.crt");
+#endif
     m_App = new QApplication(argc, argv);
     m_App->setStyle("Fusion");
+
+    m_MainWindow = new MainWindow();
+    m_MainWindow->setWindowTitle("Qt Sample");
+    m_MainWindow->show();
 
     m_ListenServer = new ListenServer(argc, argv);
     
@@ -39,9 +48,7 @@ QtSample::Application::Application(int argc, char* argv[])
 		m_TokenContext = new TokenContext();
     }
 
-    m_MainWindow = new MainWindow(m_TokenContext->IsLoggedIn());
-    m_MainWindow->setWindowTitle("Qt Sample");
-    m_MainWindow->show();
+    
 }
 
 QtSample::Application::~Application()
@@ -49,6 +56,7 @@ QtSample::Application::~Application()
     delete m_TokenContext;
     delete m_MainWindow;
     delete m_ListenServer;
+    CURLStarter::ShutdownCurl();
 	delete m_App;
 }
 
@@ -71,4 +79,14 @@ void QtSample::Application::NotifyLogin(std::string refreshToken, std::string ac
     m_MainWindow->LoginAction();
 	m_TokenContext->SetRefreshToken(refreshToken);
     m_TokenContext->SetAccessToken(accessToken);
+}
+
+void QtSample::Application::NotifyLogout()
+{
+    m_MainWindow->LogoutAction();
+}
+
+void QtSample::Application::NotifyAccessTokenValid()
+{
+    m_MainWindow->LoginAction();
 }

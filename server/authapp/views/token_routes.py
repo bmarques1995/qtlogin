@@ -24,31 +24,8 @@ def renew_access_token(request: HttpRequest):
     token_str = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
     token = request.decoded_token
     refresh_token_hash = hashlib.sha512(token_str.encode('utf-8')).digest()
-    access_token = retrieve_final_access_token(token, refresh_token_hash)
-    return JsonResponse({'access_token': access_token},status=200)
 
-@csrf_exempt
-@require_http_methods(['POST'])
-@validate_refresh_token()
-def renew_refresh_token(request):
-    token = request.decoded_token
-    cached_token = cache.get(f"refresh_token_{token['type']}_{token['identifier']}")
-    if cached_token is not None:
-        JWT_PUBLIC_KEY = getattr(settings, 'JWT_PUBLIC_KEY', None)
-        obj = jwt.decode(cached_token, key=JWT_PUBLIC_KEY, algorithms=['ES512'])
-        refresh_token_hash = hashlib.sha512(cached_token.encode("utf-8")).digest()
-        access_token = retrieve_final_access_token(obj, refresh_token_hash)
-      
-        tokens = {
-            'refresh_token': cached_token,
-            'access_token': access_token
-        }
-        return JsonResponse(tokens, status=200)
-
-    token_str = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
-    refresh_token_hash = hashlib.sha512(token_str.encode('utf-8')).digest()
-    
-    user_data = User.objects.get(telephone_hash=base64.b64decode(token['identifier']))
+    user_data = User.objects.get(name=token['identifier'])
     refresh_token = UserRefreshToken.objects.get(refresh_token_hash= refresh_token_hash)
     refresh_token.delete()
     tokens = gen_tokens(user_data)
@@ -63,7 +40,7 @@ def revoke_refresh_token(request: HttpRequest):
     token_str = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
     refresh_token_hash = hashlib.sha512(token_str.encode('utf-8')).digest()
     
-    user_data = User.objects.get(telephone_hash=base64.b64decode(token['identifier']))
+    user_data = User.objects.get(name=token['identifier'])
     refresh_token = UserRefreshToken.objects.get(refresh_token_hash= refresh_token_hash)
     refresh_token.delete()
     return JsonResponse({'Message': "The provided token is revoked"},status=200)

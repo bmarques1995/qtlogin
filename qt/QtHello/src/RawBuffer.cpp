@@ -39,3 +39,10 @@ const size_t QtSample::RawBuffer::GetSize() const
 {
 	return m_Size;
 }
+
+std::string QtSample::RawBuffer::ToString() const
+{
+	if (m_Data != nullptr)
+		return std::string(reinterpret_cast<const char*>(m_Data), m_Size);
+	return std::string("");
+}
